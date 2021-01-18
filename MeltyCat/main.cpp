@@ -41,7 +41,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	// ゲームループで使う変数の宣言
 	/*Player*/
-	int x = 320, y = 640, r = 32, moveX = 2, moveY = 0;
+	int x = 360, y = 640, r = 32, moveX = 2, moveY = 0;
+	/*PlayArea*/
+	int edgeL = 320;
 
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
@@ -67,7 +69,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		/*Player_Moving*/
 		x += moveX;
 		y += moveY;
-		if (x <= 0 + r || x >= WIN_WIDTH - r) {
+		if (x <= edgeL + r || x >= WIN_WIDTH - r) {
 			moveX = -moveX;
 		}
 		if (y <= 0 + r || y >= WIN_HEIGHT - r) {
@@ -75,6 +77,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 
 		// 描画処理
+		/*PlaeArea*/
+		DrawBox(edgeL, 0, WIN_WIDTH, WIN_HEIGHT, GetColor(255, 192, 192), true);
 		/*Player*/
 		DrawCircle(x, y, r, GetColor(255, 255, 255), true);
 
