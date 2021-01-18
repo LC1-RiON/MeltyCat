@@ -7,7 +7,7 @@ const char TITLE[] = "MeltyCat";
 const int WIN_WIDTH = 1280;
 
 // ウィンドウ縦幅
-const int WIN_HEIGHT = 768;	
+const int WIN_HEIGHT = 768;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -28,7 +28,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SetWindowSizeExtendRate(1.0);
 
 	// 画面の背景色を設定する
-	SetBackgroundColor(0x00, 0x00, 0xFF);			
+	SetBackgroundColor(0x80, 0x80, 0xFF);
 
 	// DXlibの初期化
 	if (DxLib_Init() == -1) { return -1; }
@@ -41,7 +41,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	// ゲームループで使う変数の宣言
 	/*Player*/
-	int x = 360, y = 640, r = 32, moveX = 2, moveY = 0;
+	int x = 360, y = 736, r = 32, moveX = 2, moveY = 0;
 	/*PlayArea*/
 	int edgeL = 320;
 
@@ -79,12 +79,17 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		// 描画処理
 		/*PlaeArea*/
 		DrawBox(edgeL, 0, WIN_WIDTH, WIN_HEIGHT, GetColor(255, 192, 192), true);
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 12; j++) {
+				DrawBox(i * 64 + edgeL, j * 64, (i + 1) * 64 + edgeL, (j + 1) * 64, GetColor(255, 255, 255), false);
+			}
+		}
 		/*Player*/
 		DrawCircle(x, y, r, GetColor(255, 255, 255), true);
 
 		//---------  ここまでにプログラムを記述  ---------//
 		// (ダブルバッファ)裏面
-		ScreenFlip();	
+		ScreenFlip();
 
 		// 20ミリ秒待機(疑似60FPS)
 		WaitTimer(20);
