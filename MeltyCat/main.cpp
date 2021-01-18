@@ -47,6 +47,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	/*JampPad*/
 	enum Jamp { LU, LD, RU, RD };
 	int jampX = 672, jampY = 480, vector = LU;
+	/*Cursor*/
+	int cursorX, cursorY, putX, putY;
 
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
@@ -119,6 +121,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				moveY = 0;
 			}
 		}
+		/*Cursor_Operate*/
+		GetMousePoint(&cursorX, &cursorY);
+		putX = (cursorX - edgeL) / 64 * 64 + edgeL + 32;
+		putY = cursorY / 64 * 64 + 32;
 
 		// 描画処理
 		/*PlaeArea*/
@@ -127,6 +133,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			for (int j = 0; j < 12; j++) {
 				DrawBox(i * 64 + edgeL, j * 64, (i + 1) * 64 + edgeL, (j + 1) * 64, GetColor(255, 255, 255), false);
 			}
+		}
+		/*PutBox*/
+		if (cursorX >= edgeL && cursorX <= WIN_WIDTH && cursorY >= 0 && cursorY <= WIN_HEIGHT) {
+			DrawBox(putX - 32, putY - 32, putX + 32, putY + 32, GetColor(255, 255, 0), false);
 		}
 		/*JampPad*/
 		switch (vector) {
