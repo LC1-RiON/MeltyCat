@@ -45,16 +45,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	/*PlayArea*/
 	int edgeL = 320;
 	/*JampPad*/
-	enum Jamp { LU, LD, RU, RD };
-	int jampX = 672, jampY = 480, vector = LU;
+	enum Jamp { LU, LD, RU, RD };/*Left,Right,Up,Down*/
+	int jampX = 0, jampY = 0, jampPut = 0, vector = LU;
 	/*Cursor*/
-	int cursorX, cursorY, putX, putY;
+	int cursorX, cursorY, putX, putY, putVector = LU;
 
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
+	int click = 0;
 
 	// 1ループ(フレーム)前のキーボード情報
 	char oldkeys[256] = { 0 };
+	int oldclick = 0;
 
 	// ゲームループ
 	while (1)
@@ -63,8 +65,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		for (int i = 0; i < 256; i++) {
 			oldkeys[i] = keys[i];
 		}
+		oldclick = click;
 		// 最新のキーボード情報を取得
 		GetHitKeyStateAll(keys);
+		click = GetMouseInput();
 
 		// 画面クリア
 		ClearDrawScreen();
