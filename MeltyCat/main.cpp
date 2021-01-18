@@ -41,9 +41,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	// ゲームループで使う変数の宣言
 	/*Player*/
-	int x = 360, y = 736, r = 32, moveX = 2, moveY = 0;
+	int x = 360, y = 480, r = 32, moveX = 2, moveY = 0;
 	/*PlayArea*/
 	int edgeL = 320;
+	/*JampPad*/
+	enum Jamp { LU, LD, RU, RD };
+	int jampX = 672, jampY = 480, vector = LU;
 
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
@@ -75,6 +78,47 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		if (y <= 0 + r || y >= WIN_HEIGHT - r) {
 			moveY = -moveY;
 		}
+		/*Player_Turning*/
+		if (x == jampX && y == jampY && moveX > 0) {
+			if (vector == LU) {
+				moveX = 0;
+				moveY = -2;
+			}
+			else if (vector == LD) {
+				moveX = 0;
+				moveY = 2;
+			}
+		}
+		else if (x == jampX && y == jampY && moveX < 0) {
+			if (vector == RU) {
+				moveX = 0;
+				moveY = -2;
+			}
+			else if (vector == RD) {
+				moveX = 0;
+				moveY = 2;
+			}
+		}
+		else if (x == jampX && y == jampY && moveY > 0) {
+			if (vector == LU) {
+				moveX = -2;
+				moveY = 0;
+			}
+			else if (vector == RU) {
+				moveX = 2;
+				moveY = 0;
+			}
+		}
+		else if (x == jampX && y == jampY && moveY < 0) {
+			if (vector == LD) {
+				moveX = -2;
+				moveY = 0;
+			}
+			else if (vector == RD) {
+				moveX = 2;
+				moveY = 0;
+			}
+		}
 
 		// 描画処理
 		/*PlaeArea*/
@@ -83,6 +127,25 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			for (int j = 0; j < 12; j++) {
 				DrawBox(i * 64 + edgeL, j * 64, (i + 1) * 64 + edgeL, (j + 1) * 64, GetColor(255, 255, 255), false);
 			}
+		}
+		/*JampPad*/
+		switch (vector) {
+		case LU:
+			DrawTriangle(jampX - r, jampY + r, jampX + r, jampY - r, jampX + r, jampY + r, GetColor(192, 255, 192), true);
+			break;
+
+		case LD:
+			DrawTriangle(jampX - r, jampY - r, jampX + r, jampY + r, jampX + r, jampY - r, GetColor(192, 255, 192), true);
+			break;
+
+		case RU:
+			DrawTriangle(jampX + r, jampY + r, jampX - r, jampY - r, jampX - r, jampY + r, GetColor(192, 255, 192), true);
+			break;
+
+		case RD:
+			DrawTriangle(jampX + r, jampY - r, jampX - r, jampY + r, jampX - r, jampY - r, GetColor(192, 255, 192), true);
+			break;
+
 		}
 		/*Player*/
 		DrawCircle(x, y, r, GetColor(255, 255, 255), true);
