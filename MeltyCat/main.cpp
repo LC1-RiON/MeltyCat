@@ -45,7 +45,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	/*PlayArea*/
 	int edgeL = 320;
 	/*JampPad*/
-	enum Jamp { LU, LD, RU, RD };/*Left,Right,Up,Down*/
+	enum Jamp { LU, LD, RD, RU };/*Left,Right,Up,Down*/
 	int jampX = 0, jampY = 0, jampPut = 0, vector = LU;
 	/*Cursor*/
 	int cursorX, cursorY, putX, putY, putVector = LU;
@@ -78,10 +78,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		/*Player_Moving*/
 		x += moveX;
 		y += moveY;
-		if (x <= edgeL + r || x >= WIN_WIDTH - r) {
+		if (x < edgeL + r || x > WIN_WIDTH - r) {
 			moveX = -moveX;
 		}
-		if (y <= 0 + r || y >= WIN_HEIGHT - r) {
+		if (y < 0 + r || y > WIN_HEIGHT - r) {
 			moveY = -moveY;
 		}
 		/*Player_Turning*/
@@ -129,6 +129,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		GetMousePoint(&cursorX, &cursorY);
 		putX = (cursorX - edgeL) / 64 * 64 + edgeL + 32;
 		putY = cursorY / 64 * 64 + 32;
+		/*JampPad_Spining*/
+		if (keys[KEY_INPUT_LSHIFT] == 1 && oldkeys[KEY_INPUT_LSHIFT] == 0) {
+			putVector++;
+			if (putVector > RU) {
+				putVector = LU;
+			}
+		}
+		/*JampPad_Putting*/
+		if ((oldclick & MOUSE_INPUT_LEFT) == 0 && (click & MOUSE_INPUT_LEFT) == 1) {
+			jampX = putX;
+			jampY = putY;
+			vector = putVector;
+			jampPut = 1;
+		}
 
 		// •`‰æˆ—
 		/*PlaeArea*/
@@ -142,24 +156,43 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		if (cursorX >= edgeL && cursorX <= WIN_WIDTH && cursorY >= 0 && cursorY <= WIN_HEIGHT) {
 			DrawBox(putX - 32, putY - 32, putX + 32, putY + 32, GetColor(255, 255, 0), false);
 		}
-		/*JampPad*/
-		switch (vector) {
+		switch (putVector) {
 		case LU:
-			DrawTriangle(jampX - r, jampY + r, jampX + r, jampY - r, jampX + r, jampY + r, GetColor(192, 255, 192), true);
+			DrawTriangle(cursorX - r, cursorY + r, cursorX + r, cursorY - r, cursorX + r, cursorY + r, GetColor(192, 255, 192), true);
 			break;
 
 		case LD:
-			DrawTriangle(jampX - r, jampY - r, jampX + r, jampY + r, jampX + r, jampY - r, GetColor(192, 255, 192), true);
-			break;
-
-		case RU:
-			DrawTriangle(jampX + r, jampY + r, jampX - r, jampY - r, jampX - r, jampY + r, GetColor(192, 255, 192), true);
+			DrawTriangle(cursorX - r, cursorY - r, cursorX + r, cursorY + r, cursorX + r, cursorY - r, GetColor(192, 255, 192), true);
 			break;
 
 		case RD:
-			DrawTriangle(jampX + r, jampY - r, jampX - r, jampY + r, jampX - r, jampY - r, GetColor(192, 255, 192), true);
+			DrawTriangle(cursorX + r, cursorY - r, cursorX - r, cursorY + r, cursorX - r, cursorY - r, GetColor(192, 255, 192), true);
 			break;
 
+		case RU:
+			DrawTriangle(cursorX + r, cursorY + r, cursorX - r, cursorY - r, cursorX - r, cursorY + r, GetColor(192, 255, 192), true);
+			break;
+		}
+
+		/*JampPad*/
+		if (jampPut == 1) {
+			switch (vector) {
+			case LU:
+				DrawTriangle(jampX - r, jampY + r, jampX + r, jampY - r, jampX + r, jampY + r, GetColor(192, 255, 192), true);
+				break;
+
+			case LD:
+				DrawTriangle(jampX - r, jampY - r, jampX + r, jampY + r, jampX + r, jampY - r, GetColor(192, 255, 192), true);
+				break;
+
+			case RD:
+				DrawTriangle(jampX + r, jampY - r, jampX - r, jampY + r, jampX - r, jampY - r, GetColor(192, 255, 192), true);
+				break;
+
+			case RU:
+				DrawTriangle(jampX + r, jampY + r, jampX - r, jampY - r, jampX - r, jampY + r, GetColor(192, 255, 192), true);
+				break;
+			}
 		}
 		/*Player*/
 		DrawCircle(x, y, r, GetColor(255, 255, 255), true);
