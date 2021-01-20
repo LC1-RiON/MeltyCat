@@ -41,14 +41,33 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	// ゲームループで使う変数の宣言
 	/*Player*/
-	int x = 360, y = 480, r = 32, moveX = 2, moveY = 0;
+	enum Cat { SOLID/*固体*/, LIQUID/*液体*/ };
+	int x = 800/*edgeL+7×64+r*/, y = 352/*5×64+r*/, r = 32, moveX = 2, moveY = 0, state = SOLID;
+	/*Item*/
+	int itemX = 1120/* edgeL+12×64+r */, itemY = 160/* 2×64+r */, itemPut = 1;
 	/*PlayArea*/
-	int edgeL = 320;
+	const int edgeL = 320;
 	/*JampPad*/
 	enum Jamp { LU, LD, RD, RU };/*Left,Right,Up,Down*/
 	int jampX = 0, jampY = 0, jampPut = 0, vector = LU;
 	/*Cursor*/
 	int cursorX, cursorY, putX, putY, putVector = LU;
+
+	/*MapChip*/
+	int map[12][15] = {
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+	};
 
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
@@ -125,6 +144,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				moveY = 0;
 			}
 		}
+		/*State_Switch*/
+		if (itemPut == 1 && (x - edgeL) / 64 == (itemX - edgeL) / 64 && y / 64 == itemY / 64) {
+			itemPut = 0;
+			state++;
+			if (state > LIQUID) {
+				state = SOLID;
+			}
+		}
 		/*Cursor_Operate*/
 		GetMousePoint(&cursorX, &cursorY);
 		putX = (cursorX - edgeL) / 64 * 64 + edgeL + 32;
@@ -194,8 +221,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				break;
 			}
 		}
+		/*SwitchItem*/
+		if (itemPut == 1) {
+			DrawCircle(itemX, itemY, 8, GetColor(112, 112, 255), true);
+		}
 		/*Player*/
-		DrawCircle(x, y, r, GetColor(255, 255, 255), true);
+		if (state == SOLID) {
+			DrawCircle(x, y, r, GetColor(255, 255, 128), true);
+		}
+		else if (state == LIQUID) {
+			DrawCircle(x, y, r, GetColor(128, 128, 255), true);
+		}
+
+		/*デバッグコード*/
+//		DrawFormatString(0, 0, GetColor(255, 255, 255), "");
 
 		//---------  ここまでにプログラムを記述  ---------//
 		// (ダブルバッファ)裏面
