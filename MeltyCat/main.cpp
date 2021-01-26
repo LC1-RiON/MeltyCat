@@ -1,5 +1,4 @@
 #include "DxLib.h"
-#include "Collision.h"
 
 // ウィンドウのタイトルに表示する文字列
 const char TITLE[] = "MeltyCat";
@@ -48,7 +47,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	int itemX = 1120/* edgeL+12×64+r */, itemY = 160/* 2×64+r */, itemPut = 1;
 	/*PlayArea*/
 	const int edgeL = 320;
-	/*JampPad*/
+	/*JampBlock*/
 	enum Jamp { LU, LD, RD, RU };/*Left,Right,Up,Down*/
 	int jampX = 0, jampY = 0, jampPut = 0, vector = LU;
 	/*Cursor*/
@@ -70,12 +69,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
 	};
 
-	//更新部分
-	Collision.collision;
-	
-	//
-	
-	
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
 	int click = 0;
@@ -151,12 +144,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				moveY = 0;
 			}
 		}
-
-		//変更部分
-		collision.update(vector + 1);
-		
-		//
-		
 		/*State_Switch*/
 		if (itemPut == 1 && (x - edgeL) / 64 == (itemX - edgeL) / 64 && y / 64 == itemY / 64) {
 			itemPut = 0;
@@ -169,14 +156,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		GetMousePoint(&cursorX, &cursorY);
 		putX = (cursorX - edgeL) / 64 * 64 + edgeL + 32;
 		putY = cursorY / 64 * 64 + 32;
-		/*JampPad_Spining*/
+		/*JampBlock_Spining*/
 		if (keys[KEY_INPUT_LSHIFT] == 1 && oldkeys[KEY_INPUT_LSHIFT] == 0) {
 			putVector++;
 			if (putVector > RU) {
 				putVector = LU;
 			}
 		}
-		/*JampPad_Putting*/
+		/*JampBlock_Putting*/
 		if ((oldclick & MOUSE_INPUT_LEFT) == 0 && (click & MOUSE_INPUT_LEFT) == 1) {
 			jampX = putX;
 			jampY = putY;
@@ -214,7 +201,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			break;
 		}
 
-		/*JampPad*/
+		/*JampBlock*/
 		if (jampPut == 1) {
 			switch (vector) {
 			case LU:
