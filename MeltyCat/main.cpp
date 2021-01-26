@@ -1,4 +1,5 @@
 #include "DxLib.h"
+#include "Collision.h"
 
 // ウィンドウのタイトルに表示する文字列
 const char TITLE[] = "MeltyCat";
@@ -69,6 +70,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
 	};
 
+	//更新部分
+	Collision.collision;
+	
+	//
+	
+	
 	// 最新のキーボード情報用
 	char keys[256] = { 0 };
 	int click = 0;
@@ -144,6 +151,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				moveY = 0;
 			}
 		}
+
+		//変更部分
+		collision.update(vector + 1);
+		
+		//
+		
 		/*State_Switch*/
 		if (itemPut == 1 && (x - edgeL) / 64 == (itemX - edgeL) / 64 && y / 64 == itemY / 64) {
 			itemPut = 0;
