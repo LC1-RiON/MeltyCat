@@ -68,6 +68,16 @@ void Player::Turn(Block* block){/*LU=0,LD=1,RD=2,RU=3*/
 	}
 }
 
+void Player::Switch(Item* item, int edgeL){
+	if (item->GetPut() == 1 && (x - edgeL) / 64 == (item->GetX() - edgeL) / 64 && y / 64 == item->GetY() / 64) {
+		item->SetPut(0);
+		state++;
+		if (state > 1/*LIQUID*/) {
+			state = 0/*SOLID*/;
+		}
+	}
+}
+
 void Player::Draw(){
 	if (state == 0/*SOLID*/) {
 		DrawCircle(x, y, r, GetColor(255, 255, 128), true);

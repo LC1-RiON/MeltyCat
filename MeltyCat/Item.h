@@ -1,20 +1,18 @@
 #pragma once
 #include "Object.h"
-class Block : public Object{
+class Item : public Object{
 private:
-	int vector;
+
 public:
-	Block(int x, int y, int put, int vector);
-	~Block();
+	Item(int x, int y, int put);
+	~Item();
 
 	int GetX();
 	int GetY();
 	int GetPut();
-	int GetVector();
 
 	void SetX(int x);
 	void SetY(int y);
 	void SetPut(int put);
-	void SetVector(int vector);
 };
 
