@@ -1,4 +1,5 @@
 #pragma once
+#include "Block.h"
 #include "Object.h"
 class Player : public Object {
 private:
@@ -8,6 +9,8 @@ public:
 	~Player();
 
 	void Update();
+	void Move(int edgeL, int WIN_WIDTH, int WIN_HEIGHT);
+	void Turn(Block* block);
 	void Draw();
 
 	int GetX();

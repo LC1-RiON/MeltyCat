@@ -14,6 +14,60 @@ Player::~Player() {}
 void Player::Update(){
 }
 
+void Player::Move(int edgeL, int WIN_WIDTH, int WIN_HEIGHT){
+	x += moveX;
+	y += moveY;
+	if (x < edgeL + r || x > WIN_WIDTH - r) {
+		moveX = -moveX;
+	}
+	if (y < 0 + r || y > WIN_HEIGHT - r) {
+		moveY = -moveY;
+	}
+}
+
+void Player::Turn(Block* block){/*LU=0,LD=1,RD=2,RU=3*/
+	if (x == block->GetX() && y == block->GetY() && moveX > 0) {
+		if (block->GetVector() == 0) {
+			moveX = 0;
+			moveY = -2;
+		}
+		else if (block->GetVector() == 1) {
+			moveX = 0;
+			moveY = 2;
+		}
+	}
+	else if (x == block->GetX() && y == block->GetY() && moveX < 0) {
+		if (block->GetVector() == 3) {
+			moveX = 0;
+			moveY = -2;
+		}
+		else if (block->GetVector() == 2) {
+			moveX = 0;
+			moveY = 2;
+		}
+	}
+	else if (x == block->GetX() && y == block->GetY() && moveY > 0) {
+		if (block->GetVector() == 0) {
+			moveX = -2;
+			moveY = 0;
+		}
+		else if (block->GetVector() == 3) {
+			moveX = 2;
+			moveY = 0;
+		}
+	}
+	else if (x == block->GetX() && y == block->GetY() && moveY < 0) {
+		if (block->GetVector() == 1) {
+			moveX = -2;
+			moveY = 0;
+		}
+		else if (block->GetVector() == 2) {
+			moveX = 2;
+			moveY = 0;
+		}
+	}
+}
+
 void Player::Draw(){
 	if (state == 0/*SOLID*/) {
 		DrawCircle(x, y, r, GetColor(255, 255, 128), true);
