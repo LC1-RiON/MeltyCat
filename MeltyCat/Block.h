@@ -4,8 +4,11 @@ class Block : public Object{
 private:
 	int vector;
 public:
-	Block(int x, int y, int put, int vector);
+	Block(int x, int y, int r, int put, int vector);
 	~Block();
+
+	void Update();
+	void Draw();
 
 	int GetX();
 	int GetY();

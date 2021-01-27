@@ -4,8 +4,11 @@ class Item : public Object{
 private:
 
 public:
-	Item(int x, int y, int put);
+	Item(int x, int y, int r, int put);
 	~Item();
+
+	void Update();
+	void Draw();
 
 	int GetX();
 	int GetY();
