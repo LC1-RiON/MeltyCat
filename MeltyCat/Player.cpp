@@ -1,3 +1,4 @@
+#include "DxLib.h"
 #include "Player.h"
 
 Player::Player(int x, int y, int r, int moveX, int moveY, int state) {
@@ -9,6 +10,18 @@ Player::Player(int x, int y, int r, int moveX, int moveY, int state) {
 	this->state = state;
 }
 Player::~Player() {}
+
+void Player::Update(){
+}
+
+void Player::Draw(){
+	if (state == 0/*SOLID*/) {
+		DrawCircle(x, y, r, GetColor(255, 255, 128), true);
+	}
+	else if (state == 1/*LIQUID*/) {
+		DrawCircle(x, y, r, GetColor(128, 128, 255), true);
+	}
+}
 
 int Player::GetX() { return x; }
 int Player::GetY() { return y; }

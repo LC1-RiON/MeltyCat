@@ -7,6 +7,9 @@ public:
 	Player(int x, int y, int r, int moveX, int moveY, int state);
 	~Player();
 
+	void Update();
+	void Draw();
+
 	int GetX();
 	int GetY();
 	int GetR();
