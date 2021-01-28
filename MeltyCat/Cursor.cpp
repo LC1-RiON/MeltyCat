@@ -1,16 +1,24 @@
 #include "DxLib.h"
 #include "Cursor.h"
 
-Cursor::Cursor(int x, int y, int putX, int putY, int vector){
+Cursor::Cursor(int x, int y, int r, int putX, int putY, int vector){
 	this->x = x;
 	this->y = y;
+	this->r = r;
 	this->putX = putX;
 	this->putY = putY;
 	this->vector = vector;
 }
 Cursor::~Cursor(){}
 
-void Cursor::Update(){}
+void Cursor::Update(int edgeL,
+char* keys, char* oldkeys,
+int click, int oldclick, Block* block,
+int WIN_WIDTH, int WIN_HEIGHT){
+	Drag(edgeL);
+	Spin(keys, oldkeys);
+	Put(click, oldclick, block);
+}
 
 void Cursor::Drag(int edgeL){
 	GetMousePoint(&x, &y);

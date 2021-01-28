@@ -11,7 +11,10 @@ Player::Player(int x, int y, int r, int moveX, int moveY, int state) {
 }
 Player::~Player() {}
 
-void Player::Update(){
+void Player::Update(int edgeL, int WIN_WIDTH, int WIN_HEIGHT, Block* block, Item* item){
+	Move(edgeL, WIN_WIDTH, WIN_HEIGHT);
+	Turn(block);
+	Switch(item, edgeL);
 }
 
 void Player::Move(int edgeL, int WIN_WIDTH, int WIN_HEIGHT){

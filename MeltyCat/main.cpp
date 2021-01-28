@@ -1,4 +1,8 @@
 #include "DxLib.h"
+#include "Player.h"
+#include "Block.h"
+#include "Item.h"
+#include "Cursor.h"
 
 // ウィンドウのタイトルに表示する文字列
 const char TITLE[] = "MeltyCat";
@@ -42,16 +46,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	// ゲームループで使う変数の宣言
 	/*Player*/
 	enum Cat { SOLID/*固体*/, LIQUID/*液体*/ };
-	int x = 800/*edgeL+7×64+r*/, y = 352/*5×64+r*/, r = 32, moveX = 2, moveY = 0, state = SOLID;
+	Player* player = new Player(800, 352, 32, 2, 0, SOLID);
 	/*Item*/
-	int itemX = 1120/* edgeL+12×64+r */, itemY = 160/* 2×64+r */, itemPut = 1;
+	Item* item = new Item(1120, 160, 8, 1);
 	/*PlayArea*/
 	const int edgeL = 320;
 	/*JampBlock*/
 	enum Jamp { LU, LD, RD, RU };/*Left,Right,Up,Down*/
-	int jampX = 0, jampY = 0, jampPut = 0, vector = LU;
+	Block* block = new Block(0, 0, 32, 0, LU);
 	/*Cursor*/
-	int cursorX, cursorY, putX, putY, putVector = LU;
+	Cursor* cursor = new Cursor(0, 0, 32, 0, 0, LU);
 
 	/*MapChip*/
 	int map[12][15] = {
@@ -94,82 +98,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//---------  ここからプログラムを記述  ----------//
 
 		// 更新処理
-		/*Player_Moving*/
-		x += moveX;
-		y += moveY;
-		if (x < edgeL + r || x > WIN_WIDTH - r) {
-			moveX = -moveX;
-		}
-		if (y < 0 + r || y > WIN_HEIGHT - r) {
-			moveY = -moveY;
-		}
-		/*Player_Turning*/
-		if (x == jampX && y == jampY && moveX > 0) {
-			if (vector == LU) {
-				moveX = 0;
-				moveY = -2;
-			}
-			else if (vector == LD) {
-				moveX = 0;
-				moveY = 2;
-			}
-		}
-		else if (x == jampX && y == jampY && moveX < 0) {
-			if (vector == RU) {
-				moveX = 0;
-				moveY = -2;
-			}
-			else if (vector == RD) {
-				moveX = 0;
-				moveY = 2;
-			}
-		}
-		else if (x == jampX && y == jampY && moveY > 0) {
-			if (vector == LU) {
-				moveX = -2;
-				moveY = 0;
-			}
-			else if (vector == RU) {
-				moveX = 2;
-				moveY = 0;
-			}
-		}
-		else if (x == jampX && y == jampY && moveY < 0) {
-			if (vector == LD) {
-				moveX = -2;
-				moveY = 0;
-			}
-			else if (vector == RD) {
-				moveX = 2;
-				moveY = 0;
-			}
-		}
-		/*State_Switch*/
-		if (itemPut == 1 && (x - edgeL) / 64 == (itemX - edgeL) / 64 && y / 64 == itemY / 64) {
-			itemPut = 0;
-			state++;
-			if (state > LIQUID) {
-				state = SOLID;
-			}
-		}
-		/*Cursor_Operate*/
-		GetMousePoint(&cursorX, &cursorY);
-		putX = (cursorX - edgeL) / 64 * 64 + edgeL + 32;
-		putY = cursorY / 64 * 64 + 32;
-		/*JampBlock_Spining*/
-		if (keys[KEY_INPUT_LSHIFT] == 1 && oldkeys[KEY_INPUT_LSHIFT] == 0) {
-			putVector++;
-			if (putVector > RU) {
-				putVector = LU;
-			}
-		}
-		/*JampBlock_Putting*/
-		if ((oldclick & MOUSE_INPUT_LEFT) == 0 && (click & MOUSE_INPUT_LEFT) == 1) {
-			jampX = putX;
-			jampY = putY;
-			vector = putVector;
-			jampPut = 1;
-		}
+		player->Update(edgeL, WIN_WIDTH, WIN_HEIGHT, block, item);
+		block->Update();
+		item->Update();
+		cursor->Update(edgeL, keys, oldkeys, click, oldclick, block, WIN_WIDTH, WIN_HEIGHT);
 
 		// 描画処理
 		/*PlaeArea*/
@@ -179,59 +111,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				DrawBox(i * 64 + edgeL, j * 64, (i + 1) * 64 + edgeL, (j + 1) * 64, GetColor(255, 255, 255), false);
 			}
 		}
-		/*PutBox*/
-		if (cursorX >= edgeL && cursorX <= WIN_WIDTH && cursorY >= 0 && cursorY <= WIN_HEIGHT) {
-			DrawBox(putX - 32, putY - 32, putX + 32, putY + 32, GetColor(255, 255, 0), false);
-		}
-		switch (putVector) {
-		case LU:
-			DrawTriangle(cursorX - r, cursorY + r, cursorX + r, cursorY - r, cursorX + r, cursorY + r, GetColor(192, 255, 192), true);
-			break;
 
-		case LD:
-			DrawTriangle(cursorX - r, cursorY - r, cursorX + r, cursorY + r, cursorX + r, cursorY - r, GetColor(192, 255, 192), true);
-			break;
-
-		case RD:
-			DrawTriangle(cursorX + r, cursorY - r, cursorX - r, cursorY + r, cursorX - r, cursorY - r, GetColor(192, 255, 192), true);
-			break;
-
-		case RU:
-			DrawTriangle(cursorX + r, cursorY + r, cursorX - r, cursorY - r, cursorX - r, cursorY + r, GetColor(192, 255, 192), true);
-			break;
-		}
-
-		/*JampBlock*/
-		if (jampPut == 1) {
-			switch (vector) {
-			case LU:
-				DrawTriangle(jampX - r, jampY + r, jampX + r, jampY - r, jampX + r, jampY + r, GetColor(192, 255, 192), true);
-				break;
-
-			case LD:
-				DrawTriangle(jampX - r, jampY - r, jampX + r, jampY + r, jampX + r, jampY - r, GetColor(192, 255, 192), true);
-				break;
-
-			case RD:
-				DrawTriangle(jampX + r, jampY - r, jampX - r, jampY + r, jampX - r, jampY - r, GetColor(192, 255, 192), true);
-				break;
-
-			case RU:
-				DrawTriangle(jampX + r, jampY + r, jampX - r, jampY - r, jampX - r, jampY + r, GetColor(192, 255, 192), true);
-				break;
-			}
-		}
-		/*SwitchItem*/
-		if (itemPut == 1) {
-			DrawCircle(itemX, itemY, 8, GetColor(112, 112, 255), true);
-		}
-		/*Player*/
-		if (state == SOLID) {
-			DrawCircle(x, y, r, GetColor(255, 255, 128), true);
-		}
-		else if (state == LIQUID) {
-			DrawCircle(x, y, r, GetColor(128, 128, 255), true);
-		}
+		cursor->Draw(edgeL, WIN_WIDTH, WIN_HEIGHT);
+		block->Draw();
+		item->Draw();
+		player->Draw();
 
 		/*デバッグコード*/
 //		DrawFormatString(0, 0, GetColor(255, 255, 255), "");
