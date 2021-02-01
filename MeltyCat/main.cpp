@@ -47,13 +47,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	/*Player*/
 	enum Cat { SOLID/*ŒÅ‘Ì*/, LIQUID/*‰t‘Ì*/ };
 	Player* player = new Player(800, 352, 32, 2, 0, SOLID);
+	/*JampBlock*/
+	enum Jamp { LU, LD, RD, RU };/*Left,Right,Up,Down*/
+	Block* block = new Block(0, 0, 32, 0, LU);
+	/*Goal*/
+
 	/*Item*/
 	Item* item = new Item(1120, 160, 8, 1);
 	/*PlayArea*/
 	const int edgeL = 320;
-	/*JampBlock*/
-	enum Jamp { LU, LD, RD, RU };/*Left,Right,Up,Down*/
-	Block* block = new Block(0, 0, 32, 0, LU);
 	/*Cursor*/
 	Cursor* cursor = new Cursor(0, 0, 32, 0, 0, LU);
 
